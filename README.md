@@ -22,7 +22,7 @@ A free, lightweight, browser-based tool to compare two colors side by side, chec
 ##  Usage
 
 ### Option 1 — Try it online
-Just open `index.html` in any modern browser, or visit the [GitHub Pages demo](#) once deployed.
+Just open `index.html` in any modern browser, or visit the [GitHub Pages demo](https://hocinebenbara.github.io/Color-Comparator/) once deployed.
 
 ### Option 2 — Run locally
 ```bash
@@ -38,7 +38,7 @@ No server, no `npm install`, no dependencies required.
 1. Push this repository to GitHub.
 2. Go to **Settings → Pages**.
 3. Under **Source**, select the `main` branch and `/ (root)` folder.
-4. Save. Your site will be live at `https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/` within a minute or two.
+4. Save. Your site will be live at `https://hocinebenbara.github.io/Color-Comparator/` within a minute or two.
 
 ##  Tech stack
 
