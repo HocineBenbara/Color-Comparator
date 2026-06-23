@@ -2,7 +2,7 @@
 
 A free, lightweight, browser-based tool to compare two colors side by side, check **WCAG contrast ratios**, and preview custom text in dozens of fonts — no installation, no dependencies, no build step.
 
-**[Live demo →](https://YOUR-USERNAME.github.io/YOUR-REPO-NAME/)**
+**[Live demo →](https://github.com/HocineBenbara/Color-Comparator.git)**
 
 ![Color Comparator screenshot](screenshot.png)
 
