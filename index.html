@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Comparator</title>
+<style>
+  :root {
+    --bg: #f4f3f0;
+    --card: #ffffff;
+    --border: #e0ddd5;
+    --text: #2c2c2a;
+    --text-secondary: #6b6a64;
+    --accent: #378ADD;
+    --radius-lg: 12px;
+    --radius-md: 8px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 1.25rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 0.15rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin: 0 0 0.9rem;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .col { display: flex; flex-direction: column; gap: 14px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0.9rem 1rem;
+    margin-bottom: 0;
+  }
+
+  .card-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .grid-2 .card { margin-bottom: 0; }
+
+  input[type="color"] {
+    width: 100%;
+    height: 44px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 0;
+    cursor: pointer;
+    background: none;
+  }
+
+  input[type="text"], select {
+    width: 100%;
+    height: 34px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 0 10px;
+    font-size: 13px;
+    background: var(--card);
+    color: var(--text);
+    font-family: inherit;
+  }
+
+  input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+  }
+
+  .hex-input {
+    margin-top: 6px;
+    text-align: center;
+    font-family: "SF Mono", "Courier New", monospace;
+  }
+
+  .rgb-text {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 6px 0 0;
+  }
+
+  .swatch-row {
+    display: flex;
+    height: 120px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .swatch { flex: 1; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: #ececea;
+    border-radius: var(--radius-md);
+    padding: 0.7rem;
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0 0 2px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .options-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+    align-items: end;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin: 0 0 5px;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    height: 34px;
+  }
+
+  .checkbox-label input { width: auto; cursor: pointer; }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent);
+  }
+
+  .slider-value {
+    font-size: 12px;
+    color: var(--text-secondary);
+    min-width: 38px;
+    text-align: right;
+  }
+
+  .font-list {
+    height: 130px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--card);
+  }
+
+  .font-list:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+  }
+
+  .font-option {
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .font-option:last-child { border-bottom: none; }
+
+  .font-option:hover { background: var(--bg); }
+
+  .font-option.selected {
+    background: rgba(55, 138, 221, 0.1);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .font-option .font-tag {
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-family: -apple-system, sans-serif;
+    font-weight: 400;
+  }
+
+  .preview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .preview-box {
+    height: 90px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem;
+    word-break: break-word;
+    overflow: hidden;
+  }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+    .grid-2, .stats-grid, .preview-grid { grid-template-columns: 1fr; }
+    .options-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Color comparator</h1>
+  <p class="subtitle">Compare two colors side by side with contrast analysis and a customizable text preview.</p>
+
+  <div class="layout">
+    <div class="col">
+      <div class="grid-2">
+        <div class="card">
+          <p class="card-label">Color A</p>
+          <input type="color" id="colorA" value="#87CEEB">
+          <input type="text" id="hexA" class="hex-input" value="#87CEEB">
+          <p class="rgb-text" id="rgbA"></p>
+        </div>
+        <div class="card">
+          <p class="card-label">Color B</p>
+          <input type="color" id="colorB" value="#000080">
+          <input type="text" id="hexB" class="hex-input" value="#000080">
+          <p class="rgb-text" id="rgbB"></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Swatches</p>
+        <div class="swatch-row">
+          <div class="swatch" id="blockA"></div>
+          <div class="swatch" id="blockB"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Contrast analysis</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-label">Contrast ratio</p>
+            <p class="stat-value" id="contrast">-</p>
+          </div>
+          <div class="stat-card">
+            <p class="stat-label">WCAG level (text)</p>
+            <p class="stat-value" id="wcag">-</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-grid">
+        <div class="preview-box" id="previewA"></div>
+        <div class="preview-box" id="previewB"></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <p class="card-label">Preview text options</p>
+        <div class="options-grid">
+          <div class="options-row">
+            <div>
+              <label class="field-label" for="previewText">Text to display</label>
+              <input type="text" id="previewText" value="Sample text">
+            </div>
+            <div>
+              <label class="field-label" for="textColor">Text color</label>
+              <input type="color" id="textColor" value="#FF0000">
+              <input type="text" id="textColorHex" class="hex-input" value="#FF0000" style="margin-top:6px;">
+            </div>
+          </div>
+
+          <div class="options-row">
+            <div>
+              <label class="field-label" for="fontSize">Text size</label>
+              <div class="slider-row">
+                <input type="range" id="fontSize" min="10" max="48" value="18" step="1">
+                <span class="slider-value" id="fontSizeValue">18px</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:14px;">
+              <label class="checkbox-label">
+                <input type="checkbox" id="boldToggle"> Bold
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="italicToggle"> Italic
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">Font — click the list, then use ↑ ↓ arrow keys to preview live</label>
+            <div class="font-list" id="fontList" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const fonts = [
+    { name: 'System Sans', value: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" },
+    { name: 'Arial', value: "Arial, Helvetica, sans-serif" },
+    { name: 'Helvetica', value: "Helvetica, Arial, sans-serif" },
+    { name: 'Verdana', value: "Verdana, Geneva, sans-serif" },
+    { name: 'Tahoma', value: "Tahoma, Geneva, sans-serif" },
+    { name: 'Trebuchet MS', value: "'Trebuchet MS', sans-serif" },
+    { name: 'Calibri', value: "Calibri, Candara, sans-serif" },
+    { name: 'Candara', value: "Candara, Calibri, sans-serif" },
+    { name: 'Segoe UI', value: "'Segoe UI', sans-serif" },
+    { name: 'Century Gothic', value: "'Century Gothic', sans-serif" },
+    { name: 'Futura', value: "Futura, 'Trebuchet MS', sans-serif" },
+    { name: 'Gill Sans', value: "'Gill Sans', 'Gill Sans MT', sans-serif" },
+    { name: 'Optima', value: "Optima, Segoe, sans-serif" },
+    { name: 'Lucida Sans', value: "'Lucida Sans', 'Lucida Grande', sans-serif" },
+    { name: 'Geneva', value: "Geneva, Verdana, sans-serif" },
+    { name: 'Avant Garde', value: "'Avant Garde', 'Century Gothic', sans-serif" },
+    { name: 'Arial Black', value: "'Arial Black', Gadget, sans-serif" },
+    { name: 'Impact', value: "Impact, Charcoal, sans-serif" },
+    { name: 'Haettenschweiler', value: "Haettenschweiler, 'Arial Narrow', sans-serif" },
+    { name: 'Franklin Gothic', value: "'Franklin Gothic Medium', Arial, sans-serif" },
+    { name: 'Georgia', value: "Georgia, serif" },
+    { name: 'Times New Roman', value: "'Times New Roman', Times, serif" },
+    { name: 'Garamond', value: "Garamond, 'Palatino Linotype', serif" },
+    { name: 'Palatino', value: "'Palatino Linotype', Palatino, serif" },
+    { name: 'Cambria', value: "Cambria, Georgia, serif" },
+    { name: 'Book Antiqua', value: "'Book Antiqua', Palatino, serif" },
+    { name: 'Baskerville', value: "Baskerville, 'Times New Roman', serif" },
+    { name: 'Didot', value: "Didot, Georgia, serif" },
+    { name: 'Rockwell', value: "Rockwell, 'Courier Bold', serif" },
+    { name: 'Bodoni MT', value: "'Bodoni MT', Georgia, serif" },
+    { name: 'Constantia', value: "Constantia, Cambria, serif" },
+    { name: 'Perpetua', value: "Perpetua, Baskerville, serif" },
+    { name: 'Courier New', value: "'Courier New', Courier, monospace" },
+    { name: 'SF Mono', value: "'SF Mono', Consolas, monospace" },
+    { name: 'Consolas', value: "Consolas, 'Courier New', monospace" },
+    { name: 'Lucida Console', value: "'Lucida Console', Monaco, monospace" },
+    { name: 'Monaco', value: "Monaco, Consolas, monospace" },
+    { name: 'Menlo', value: "Menlo, Monaco, monospace" },
+    { name: 'Andale Mono', value: "'Andale Mono', monospace" },
+    { name: 'Comic Sans MS', value: "'Comic Sans MS', cursive, sans-serif" },
+    { name: 'Brush Script', value: "'Brush Script MT', cursive" },
+    { name: 'Lucida Handwriting', value: "'Lucida Handwriting', cursive" },
+    { name: 'Segoe Script', value: "'Segoe Script', cursive" },
+    { name: 'Bradley Hand', value: "'Bradley Hand', cursive" },
+    { name: 'Copperplate', value: "Copperplate, fantasy" },
+    { name: 'Papyrus', value: "Papyrus, fantasy" },
+    { name: 'Herculanum', value: "Herculanum, fantasy" },
+    { name: 'Marker Felt', value: "'Marker Felt', fantasy" },
+    { name: 'Chalkboard', value: "Chalkboard, 'Comic Sans MS', cursive" },
+    { name: 'Arial Narrow', value: "'Arial Narrow', Arial, sans-serif" },
+    { name: 'Bahnschrift', value: "Bahnschrift, 'Arial Narrow', sans-serif" }
+  ];
+
+  let selectedFont = fonts[0].value;
+  let selectedIndex = 0;
+
+  function buildFontList() {
+    const list = document.getElementById('fontList');
+    list.innerHTML = '';
+    fonts.forEach((f, i) => {
+      const item = document.createElement('div');
+      item.className = 'font-option';
+      item.style.fontFamily = f.value;
+      if (i === selectedIndex) item.classList.add('selected');
+      item.innerHTML = '<span>' + f.name + '</span><span class="font-tag">Abc 123</span>';
+      item.addEventListener('click', () => {
+        selectedIndex = i;
+        selectFont();
+      });
+      list.appendChild(item);
+    });
+  }
+
+  function selectFont() {
+    selectedFont = fonts[selectedIndex].value;
+    const list = document.getElementById('fontList');
+    const items = list.querySelectorAll('.font-option');
+    items.forEach(el => el.classList.remove('selected'));
+    const active = items[selectedIndex];
+    active.classList.add('selected');
+    active.scrollIntoView({ block: 'nearest' });
+    update();
+  }
+
+  document.getElementById('fontList').addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, fonts.length - 1);
+      selectFont();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, 0);
+      selectFont();
+    }
+  });
+
+  function hexToRgb(hex) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    const num = parseInt(hex, 16);
+    return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+  }
+
+  function luminance([r, g, b]) {
+    const a = [r, g, b].map(v => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+  }
+
+  function update() {
+    const hexA = document.getElementById('hexA').value;
+    const hexB = document.getElementById('hexB').value;
+
+    document.getElementById('colorA').value = hexA;
+    document.getElementById('colorB').value = hexB;
+    document.getElementById('blockA').style.background = hexA;
+    document.getElementById('blockB').style.background = hexB;
+
+    const rgbA = hexToRgb(hexA), rgbB = hexToRgb(hexB);
+    document.getElementById('rgbA').textContent = 'RGB(' + rgbA.join(', ') + ')';
+    document.getElementById('rgbB').textContent = 'RGB(' + rgbB.join(', ') + ')';
+
+    const lA = luminance(rgbA), lB = luminance(rgbB);
+    const ratio = (Math.max(lA, lB) + 0.05) / (Math.min(lA, lB) + 0.05);
+    document.getElementById('contrast').textContent = ratio.toFixed(2) + ' : 1';
+
+    let level = 'Fail';
+    if (ratio >= 7) level = 'AAA';
+    else if (ratio >= 4.5) level = 'AA';
+    else if (ratio >= 3) level = 'AA (large text)';
+    document.getElementById('wcag').textContent = level;
+
+    const text = document.getElementById('previewText').value || 'Sample text';
+    const textColor = document.getElementById('textColor').value;
+    document.getElementById('textColorHex').value = textColor;
+    const font = selectedFont;
+    const bold = document.getElementById('boldToggle').checked;
+    const italic = document.getElementById('italicToggle').checked;
+    const fontSize = document.getElementById('fontSize').value;
+    document.getElementById('fontSizeValue').textContent = fontSize + 'px';
+
+    const pA = document.getElementById('previewA');
+    const pB = document.getElementById('previewB');
+    pA.style.background = hexA;
+    pB.style.background = hexB;
+
+    [pA, pB].forEach(p => {
+      p.style.setProperty('color', textColor, 'important');
+      p.style.fontFamily = font;
+      p.style.fontWeight = bold ? '700' : '400';
+      p.style.fontStyle = italic ? 'italic' : 'normal';
+      p.style.fontSize = fontSize + 'px';
+      p.textContent = text;
+    });
+  }
+
+  ['colorA', 'colorB'].forEach(id => {
+    document.getElementById(id).addEventListener('input', e => {
+      document.getElementById('hex' + id.slice(-1)).value = e.target.value;
+      update();
+    });
+  });
+
+  ['hexA', 'hexB', 'previewText', 'textColor', 'fontSize'].forEach(id => {
+    document.getElementById(id).addEventListener('input', update);
+  });
+  document.getElementById('textColorHex').addEventListener('input', (e) => {
+    document.getElementById('textColor').value = e.target.value;
+    update();
+  });
+  document.getElementById('boldToggle').addEventListener('change', update);
+  document.getElementById('italicToggle').addEventListener('change', update);
+  document.getElementById('textColor').addEventListener('change', update);
+
+  buildFontList();
+  update();
+</script>
+
+</body>
+</html>
