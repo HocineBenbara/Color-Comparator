@@ -27,8 +27,9 @@ Just open `index.html` in any modern browser, or visit the [GitHub Pages demo](h
 ### Option 2 — Run locally
 ```bash
 git clone https://github.com/HocineBenbara/Color-Comparator.git
-cd https://github.com/HocineBenbara/Color-Comparator.git
+cd Color-Comparator
 open index.html   # or double-click the file
+
 ```
 
 No server, no `npm install`, no dependencies required.
