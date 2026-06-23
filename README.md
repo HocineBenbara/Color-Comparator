@@ -27,7 +27,7 @@ Just open `index.html` in any modern browser, or visit the [GitHub Pages demo](h
 ### Option 2 — Run locally
 ```bash
 git clone https://github.com/HocineBenbara/Color-Comparator.git
-cd YOUR-REPO-NAME
+cd https://github.com/HocineBenbara/Color-Comparator.git
 open index.html   # or double-click the file
 ```
 
