@@ -34,7 +34,7 @@
 
   .container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1300px;
   }
 
   h1 {
@@ -51,7 +51,7 @@
 
   .layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2.2fr 1fr;
     gap: 14px;
   }
 
@@ -61,7 +61,7 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 0.9rem 1rem;
+    padding: 0.9rem 0.8rem;
     margin-bottom: 0;
   }
 
@@ -75,14 +75,14 @@
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 8px;
   }
 
   .grid-2 .card { margin-bottom: 0; }
 
   input[type="color"] {
     width: 100%;
-    height: 44px;
+    height: 90px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
     padding: 0;
@@ -134,6 +134,113 @@
 
   .color-wrap {
     position: relative;
+  }
+
+  .swatch-btn {
+    width: 100%;
+    height: 90px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    padding: 0;
+    cursor: pointer;
+    display: block;
+  }
+
+  .color-popover {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 50;
+    width: 420px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    padding: 18px;
+  }
+
+  .color-popover.open { display: block; }
+
+  .color-popover.align-right {
+    left: auto;
+    right: 0;
+  }
+
+  .sl-box {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    border-radius: var(--radius-md);
+    cursor: crosshair;
+    margin-bottom: 14px;
+    background: linear-gradient(to top, #000, rgba(0,0,0,0)), linear-gradient(to right, #fff, rgba(255,255,255,0));
+  }
+
+  .sl-cursor {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hue-slider {
+    width: 100%;
+    height: 16px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .hue-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .rgb-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .rgb-inputs input {
+    width: 100%;
+    height: 32px;
+    text-align: center;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .rgb-inputs label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-align: center;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .popover-hex {
+    width: 100%;
+    height: 34px;
+    text-align: center;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    font-family: "SF Mono", "Courier New", monospace;
+    font-size: 13px;
   }
 
   .swatch-row {
@@ -300,14 +407,20 @@
       <div class="grid-2">
         <div class="card">
           <p class="card-label">Color A</p>
-          <input type="color" id="colorA" value="#87CEEB">
+          <div class="color-wrap">
+            <button type="button" class="swatch-btn" id="swatchA" style="background:#87CEEB;"></button>
+            <div class="color-popover" id="popoverA"></div>
+          </div>
           <p class="picker-hint">👆 Click the swatch above to pick a color</p>
           <input type="text" id="hexA" class="hex-input" value="#87CEEB">
           <p class="rgb-text" id="rgbA"></p>
         </div>
         <div class="card">
           <p class="card-label">Color B</p>
-          <input type="color" id="colorB" value="#000080">
+          <div class="color-wrap">
+            <button type="button" class="swatch-btn" id="swatchB" style="background:#000080;"></button>
+            <div class="color-popover" id="popoverB"></div>
+          </div>
           <p class="picker-hint">👆 Click the swatch above to pick a color</p>
           <input type="text" id="hexB" class="hex-input" value="#000080">
           <p class="rgb-text" id="rgbB"></p>
@@ -352,8 +465,12 @@
               <input type="text" id="previewText" value="Sample text">
             </div>
             <div>
-              <label class="field-label" for="textColor">Text color</label>
-              <input type="color" id="textColor" value="#FF0000">
+              <label class="field-label" for="textColorHex">Text color</label>
+              <div class="color-wrap">
+                <button type="button" class="swatch-btn" id="swatchText" style="background:#FF0000;"></button>
+                <div class="color-popover align-right" id="popoverText"></div>
+              </div>
+              <p class="picker-hint">👆 Click the swatch above to pick a color</p>
               <input type="text" id="textColorHex" class="hex-input" value="#FF0000" style="margin-top:6px;">
             </div>
           </div>
@@ -484,6 +601,146 @@
     }
   });
 
+  // ===== Custom color picker =====
+  function hexToHsl(hex) {
+    const [r, g, b] = hexToRgb(hex).map(v => v / 255);
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    const d = max - min;
+    if (d === 0) { h = 0; s = 0; }
+    else {
+      s = d / (1 - Math.abs(2 * l - 1));
+      switch (max) {
+        case r: h = ((g - b) / d) % 6; break;
+        case g: h = (b - r) / d + 2; break;
+        default: h = (r - g) / d + 4;
+      }
+      h *= 60;
+      if (h < 0) h += 360;
+    }
+    return [h, s * 100, l * 100];
+  }
+
+  function hslToRgb(h, s, l) {
+    s /= 100; l /= 100;
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    const m = l - c / 2;
+    let r, g, b;
+    if (h < 60) [r, g, b] = [c, x, 0];
+    else if (h < 120) [r, g, b] = [x, c, 0];
+    else if (h < 180) [r, g, b] = [0, c, x];
+    else if (h < 240) [r, g, b] = [0, x, c];
+    else if (h < 300) [r, g, b] = [x, 0, c];
+    else [r, g, b] = [c, 0, x];
+    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+  }
+
+  function rgbToHex(r, g, b) {
+    return '#' + [r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('').toUpperCase();
+  }
+
+  function createColorPicker(popoverEl, swatchBtn, hexInput, onChange) {
+    popoverEl.innerHTML = `
+      <div class="sl-box" data-sl><div class="sl-cursor" data-cursor></div></div>
+      <input type="range" class="hue-slider" data-hue min="0" max="360" value="0">
+      <div class="rgb-inputs">
+        <div><input type="number" data-r min="0" max="255"><label>R</label></div>
+        <div><input type="number" data-g min="0" max="255"><label>G</label></div>
+        <div><input type="number" data-b min="0" max="255"><label>B</label></div>
+      </div>
+      <input type="text" class="popover-hex" data-pophex>
+    `;
+    const slBox = popoverEl.querySelector('[data-sl]');
+    const cursor = popoverEl.querySelector('[data-cursor]');
+    const hueSlider = popoverEl.querySelector('[data-hue]');
+    const rIn = popoverEl.querySelector('[data-r]');
+    const gIn = popoverEl.querySelector('[data-g]');
+    const bIn = popoverEl.querySelector('[data-b]');
+    const popHex = popoverEl.querySelector('[data-pophex]');
+
+    let state = { h: 0, s: 0, l: 100 };
+
+    function render() {
+      slBox.style.background = `linear-gradient(to top, #000, rgba(0,0,0,0)), linear-gradient(to right, #fff, hsl(${state.h},100%,50%))`;
+      const [r, g, b] = hslToRgb(state.h, state.s, state.l);
+      const hex = rgbToHex(r, g, b);
+      swatchBtn.style.background = hex;
+      hexInput.value = hex;
+      popHex.value = hex;
+      rIn.value = r; gIn.value = g; bIn.value = b;
+      hueSlider.value = state.h;
+      cursor.style.left = state.s + '%';
+      cursor.style.top = (100 - state.l) + '%';
+      onChange(hex);
+    }
+
+    function setFromHex(hex) {
+      const [h, s, l] = hexToHsl(hex);
+      state = { h, s, l };
+      render();
+    }
+
+    function setFromRgb(r, g, b) {
+      const [h, s, l] = hexToHsl(rgbToHex(r, g, b));
+      state = { h, s, l };
+      render();
+    }
+
+    function slPointer(e) {
+      const rect = slBox.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      let x = (clientX - rect.left) / rect.width * 100;
+      let y = (clientY - rect.top) / rect.height * 100;
+      x = Math.max(0, Math.min(100, x));
+      y = Math.max(0, Math.min(100, y));
+      state.s = x;
+      state.l = 100 - y;
+      render();
+    }
+
+    let dragging = false;
+    slBox.addEventListener('mousedown', e => { dragging = true; slPointer(e); });
+    window.addEventListener('mousemove', e => { if (dragging) slPointer(e); });
+    window.addEventListener('mouseup', () => { dragging = false; });
+    slBox.addEventListener('touchstart', e => { dragging = true; slPointer(e); });
+    slBox.addEventListener('touchmove', e => { if (dragging) slPointer(e); });
+    window.addEventListener('touchend', () => { dragging = false; });
+
+    hueSlider.addEventListener('input', () => {
+      state.h = Number(hueSlider.value);
+      render();
+    });
+
+    [rIn, gIn, bIn].forEach(input => {
+      input.addEventListener('input', () => {
+        setFromRgb(Number(rIn.value) || 0, Number(gIn.value) || 0, Number(bIn.value) || 0);
+      });
+    });
+
+    popHex.addEventListener('input', () => {
+      if (/^#?[0-9A-Fa-f]{6}$/.test(popHex.value)) {
+        setFromHex(popHex.value.startsWith('#') ? popHex.value : '#' + popHex.value);
+      }
+    });
+
+    swatchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.color-popover.open').forEach(p => { if (p !== popoverEl) p.classList.remove('open'); });
+      popoverEl.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!popoverEl.contains(e.target) && e.target !== swatchBtn) {
+        popoverEl.classList.remove('open');
+      }
+    });
+
+    setFromHex(hexInput.value);
+    return { setFromHex };
+  }
+
   function hexToRgb(hex) {
     hex = hex.replace('#', '');
     if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
@@ -503,8 +760,8 @@
     const hexA = document.getElementById('hexA').value;
     const hexB = document.getElementById('hexB').value;
 
-    document.getElementById('colorA').value = hexA;
-    document.getElementById('colorB').value = hexB;
+    document.getElementById('swatchA').style.background = hexA;
+    document.getElementById('swatchB').style.background = hexB;
     document.getElementById('blockA').style.background = hexA;
     document.getElementById('blockB').style.background = hexB;
 
@@ -523,8 +780,7 @@
     document.getElementById('wcag').textContent = level;
 
     const text = document.getElementById('previewText').value || 'Sample text';
-    const textColor = document.getElementById('textColor').value;
-    document.getElementById('textColorHex').value = textColor;
+    const textColor = document.getElementById('textColorHex').value;
     const font = selectedFont;
     const bold = document.getElementById('boldToggle').checked;
     const italic = document.getElementById('italicToggle').checked;
@@ -546,23 +802,40 @@
     });
   }
 
-  ['colorA', 'colorB'].forEach(id => {
-    document.getElementById(id).addEventListener('input', e => {
-      document.getElementById('hex' + id.slice(-1)).value = e.target.value;
-      update();
-    });
-  });
+  const pickerA = createColorPicker(
+    document.getElementById('popoverA'),
+    document.getElementById('swatchA'),
+    document.getElementById('hexA'),
+    () => update()
+  );
+  const pickerB = createColorPicker(
+    document.getElementById('popoverB'),
+    document.getElementById('swatchB'),
+    document.getElementById('hexB'),
+    () => update()
+  );
+  const pickerText = createColorPicker(
+    document.getElementById('popoverText'),
+    document.getElementById('swatchText'),
+    document.getElementById('textColorHex'),
+    () => update()
+  );
 
-  ['hexA', 'hexB', 'previewText', 'textColor', 'fontSize'].forEach(id => {
-    document.getElementById(id).addEventListener('input', update);
+  document.getElementById('hexA').addEventListener('input', (e) => {
+    if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) pickerA.setFromHex(e.target.value);
+  });
+  document.getElementById('hexB').addEventListener('input', (e) => {
+    if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) pickerB.setFromHex(e.target.value);
   });
   document.getElementById('textColorHex').addEventListener('input', (e) => {
-    document.getElementById('textColor').value = e.target.value;
-    update();
+    if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) pickerText.setFromHex(e.target.value);
+  });
+
+  ['previewText', 'fontSize'].forEach(id => {
+    document.getElementById(id).addEventListener('input', update);
   });
   document.getElementById('boldToggle').addEventListener('change', update);
   document.getElementById('italicToggle').addEventListener('change', update);
-  document.getElementById('textColor').addEventListener('change', update);
 
   buildFontList();
   update();
