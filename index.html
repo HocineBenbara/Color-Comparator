@@ -328,6 +328,18 @@
     text-align: right;
   }
 
+  .lightness-block {
+    margin-top: 8px;
+  }
+
+  .lightness-icons {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
   .font-list {
     height: 130px;
     overflow-y: auto;
@@ -414,6 +426,14 @@
           <p class="picker-hint">👆 Click the swatch above to pick a color</p>
           <input type="text" id="hexA" class="hex-input" value="#87CEEB">
           <p class="rgb-text" id="rgbA"></p>
+          <div class="lightness-block">
+            <label class="field-label" for="lightnessA">Assombrir / Éclaircir</label>
+            <div class="slider-row">
+              <input type="range" id="lightnessA" min="-100" max="100" value="0">
+              <span class="slider-value" id="lightnessAValue">0%</span>
+            </div>
+            <div class="lightness-icons"><span>🌑 Plus foncé</span><span>Plus clair 🌕</span></div>
+          </div>
         </div>
         <div class="card">
           <p class="card-label">Color B</p>
@@ -424,6 +444,14 @@
           <p class="picker-hint">👆 Click the swatch above to pick a color</p>
           <input type="text" id="hexB" class="hex-input" value="#000080">
           <p class="rgb-text" id="rgbB"></p>
+          <div class="lightness-block">
+            <label class="field-label" for="lightnessB">Assombrir / Éclaircir</label>
+            <div class="slider-row">
+              <input type="range" id="lightnessB" min="-100" max="100" value="0">
+              <span class="slider-value" id="lightnessBValue">0%</span>
+            </div>
+            <div class="lightness-icons"><span>🌑 Plus foncé</span><span>Plus clair 🌕</span></div>
+          </div>
         </div>
       </div>
 
@@ -472,6 +500,14 @@
               </div>
               <p class="picker-hint">👆 Click the swatch above to pick a color</p>
               <input type="text" id="textColorHex" class="hex-input" value="#FF0000" style="margin-top:6px;">
+              <div class="lightness-block">
+                <label class="field-label" for="lightnessText">Assombrir / Éclaircir</label>
+                <div class="slider-row">
+                  <input type="range" id="lightnessText" min="-100" max="100" value="0">
+                  <span class="slider-value" id="lightnessTextValue">0%</span>
+                </div>
+                <div class="lightness-icons"><span>🌑</span><span>🌕</span></div>
+              </div>
             </div>
           </div>
 
@@ -802,24 +838,79 @@
     });
   }
 
+  // ===== Darker / lighter sliders =====
+  // Each color keeps a "base" HSL captured whenever it's explicitly set
+  // (via hex input or popover picker). The slider computes a new lightness
+  // relative to that base, so moving it back and forth stays predictable.
+  let baseA = hexToHsl(document.getElementById('hexA').value);
+  let baseB = hexToHsl(document.getElementById('hexB').value);
+  let baseText = hexToHsl(document.getElementById('textColorHex').value);
+  let suppressA = false, suppressB = false, suppressText = false;
+
+  function applyLightness(base, sliderVal) {
+    let l = base[2];
+    if (sliderVal > 0) l = l + (100 - l) * (sliderVal / 100);
+    else if (sliderVal < 0) l = l + l * (sliderVal / 100);
+    const [r, g, b] = hslToRgb(base[0], base[1], l);
+    return rgbToHex(r, g, b);
+  }
+
+  function setupLightnessSlider(sliderId, valueId, pickerGetter, baseGetter, setSuppress) {
+    const slider = document.getElementById(sliderId);
+    const valueLabel = document.getElementById(valueId);
+    slider.addEventListener('input', () => {
+      const v = Number(slider.value);
+      valueLabel.textContent = (v > 0 ? '+' : '') + v + '%';
+      setSuppress(true);
+      const hex = applyLightness(baseGetter(), v);
+      pickerGetter().setFromHex(hex);
+      setSuppress(false);
+    });
+  }
+
   const pickerA = createColorPicker(
     document.getElementById('popoverA'),
     document.getElementById('swatchA'),
     document.getElementById('hexA'),
-    () => update()
+    (hex) => {
+      if (!suppressA) {
+        baseA = hexToHsl(hex);
+        document.getElementById('lightnessA').value = 0;
+        document.getElementById('lightnessAValue').textContent = '0%';
+      }
+      update();
+    }
   );
   const pickerB = createColorPicker(
     document.getElementById('popoverB'),
     document.getElementById('swatchB'),
     document.getElementById('hexB'),
-    () => update()
+    (hex) => {
+      if (!suppressB) {
+        baseB = hexToHsl(hex);
+        document.getElementById('lightnessB').value = 0;
+        document.getElementById('lightnessBValue').textContent = '0%';
+      }
+      update();
+    }
   );
   const pickerText = createColorPicker(
     document.getElementById('popoverText'),
     document.getElementById('swatchText'),
     document.getElementById('textColorHex'),
-    () => update()
+    (hex) => {
+      if (!suppressText) {
+        baseText = hexToHsl(hex);
+        document.getElementById('lightnessText').value = 0;
+        document.getElementById('lightnessTextValue').textContent = '0%';
+      }
+      update();
+    }
   );
+
+  setupLightnessSlider('lightnessA', 'lightnessAValue', () => pickerA, () => baseA, (v) => suppressA = v);
+  setupLightnessSlider('lightnessB', 'lightnessBValue', () => pickerB, () => baseB, (v) => suppressB = v);
+  setupLightnessSlider('lightnessText', 'lightnessTextValue', () => pickerText, () => baseText, (v) => suppressText = v);
 
   document.getElementById('hexA').addEventListener('input', (e) => {
     if (/^#[0-9A-Fa-f]{6}$/.test(e.target.value)) pickerA.setFromHex(e.target.value);
